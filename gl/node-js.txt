@@ -1,0 +1,7 @@
+https://nodejs.org/api/synopsis.html
+https://learn.javascript.ru/screencast/nodejs
+
+
+node name.js //исполнение файла
+ts name.ts  //исполнение файла + компиляция в js
+tsc name.ts //компиляция в js
