@@ -1,0 +1,11 @@
+https://github.com/savenkovao/intersog_full-stack
+
+
+https://git-scm.com/downloads
+
+https://habrahabr.ru/post/133363/
+https://habrahabr.ru/post/243335/
+https://codeguida.com/post/475/
+
+sublime:
+emmet
