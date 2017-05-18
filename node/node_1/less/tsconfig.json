@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noImplicitAny": false,
+    "target": "es6",
+    "sourceMap": true,
+
+    "declaration": false,
+    "removeComments": true,
+
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
