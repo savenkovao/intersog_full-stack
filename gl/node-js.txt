@@ -5,3 +5,174 @@ https://learn.javascript.ru/screencast/nodejs
 node name.js //исполнение файла
 ts name.ts  //исполнение файла + компиляция в js
 tsc name.ts //компиляция в js
+
+Node предоставляет библиотеку fs для работы с файловой системой. К примеру, для чтения файлов
+
+"Нормальный" способ чтения файлов в Node.js это чтение асинхронным способом.
+Это значит, что вы вызываете команду чтения файла и передаете callback, который будет вызван при завершении чтения.
+Это позволяет работать с несколькими запросами чтения параллельно.
+
+Для этого мы можем использовать метод readFile из класса fs.
+
+
+var fs = require('fs');
+
+fs.readFile('DATA', 'utf8', function(err, contents) {
+    if(err) { throw err; } //выбросить (остановить функцию) при ошибке
+    console.log(contents);
+});
+
+console.log('after calling readFile');
+
+
+Для начала мы загружаем класс fs с помощью команды require. Затем вызываем метод readFile,
+который получает 3 параметра: имя файла ('DATA' в нашем случае), кодировку файла ('utf8' в примере) и функцию.
+Эта функция будет вызывана, когда завершится операция чтения файла. Функция получит два параметра.
+Первый - информация о каких-либо ошибках, второй - содержимое файла.
+
+Как только программа будет запущена, Node начнет читать файл в фоновом режиме, но продолжит выполнение.
+Таким образом, сначала будет выполнен вызов console.log('after calling readFile');, который выведет этот текст в консоль.
+Затем, когда содержимое файла будет загружено в память, Node вызовет функцию, которую мы передали в метод readFile,
+и она выведет в консоль содержимое файла.
+
+
+___________________________________________________________________________________________
+1. Require
+
+require are used to consume modules. It allows you to include modules into your programs.
+You can include built-in core Node.js modules, community-based modules (node_modules) and local modules.
+
+Let’s say we want to read a file from the filesystem. Node has a core module called ‘fs’:
+_____________________________________________________
+const fs = require('fs');
+
+fs.readFile('./file.txt', 'utf-8', (err, data) => {
+  if(err) { throw err; }
+  console.log('data: ', data);
+});
+______________________________________________________
+As you can see, we imported the “fs” module into our program. It allows us to any function attached to it, like “readFile”.
+
+Require will look for files in the following order:
+
+Built-in core Node.js modules (like fs)
+Modules in node_modules folder.
+If the module name has a ./, / or ../, it will look for the directory/file in the given path.
+It matches the extensions: *.js, *.json and *.node.
+
+
+___________________________________________________________________________________________
+2. Exports
+
+exports are used to create modules. It allows you to export your own objects and functions. Let’s do an example:
+
+circle.js
+______________________________________________________
+const PI = 3.14159265359;
+exports.area = (radius) => Math.pow(radius, 2) * PI;
+exports.circunference = (radius) => 2 * radius * PI;
+______________________________________________________
+
+In the code below, we are exporting the area function. We defined the constant PI but this is only accessible within the module.
+ Only the elements associated to exports are accessible outside the module.
+
+So, we can consume it using require in another file like follows:
+
+main.js
+______________________________________________________
+const circle = require('./circle');
+let r = 3;
+console.log(`Circle with radius ${r} has
+  area: ${circle.area(r)};
+  circunference: ${circle.circunference(r)}`);
+______________________________________________________
+
+Noticed that this time we prefix the module name with ‘./‘. That indicates that the module is a local file.
+
+
+___________________________________________________________________________________________
+3. Module Wrapper
+
+You can think of each module as self-contained function like the following one:
+
+Module Wrapper
+______________________________________________________
+(function (exports, require, module, __filename, __dirname) {
+  module.exports = exports = {};
+  // Your module code ...
+});
+______________________________________________________
+
+We have already covered exports and require. Notice the relationship between module.exports and exports.
+They points to the same reference. However, if you assign something directly to exports
+you will break its link to module.exports. More on that in the next section.
+
+For our convenience __filename and __dirname are defined. They provide the full path to the current file and directory.
+The latter excludes the filename and just print out the directory path.
+
+For instance, for our ./circle.js module, it would be something like this:
+
+__filename: /User/adrian/code/circle.js
+
+__dirname: /User/adrian/code
+
+Ok, we have covered exports, require, __filename, and __dirname. The only one we haven’t cover is module. Let’s go for it!
+
+
+___________________________________________________________________________________________
+4. Module.exports vs Exports
+
+Module is not a global, it is local for each module. It contains metadata about a module, such as module id, exports, parent, children, …
+
+exports is an alias of module.exports. So, whatever you assign to exports is also available on module.exports. However, if you assign something directly to exports, then you lose the shortcut to module.exports. E.g.
+
+cat.js
+______________________________________________________
+class Cat {
+  makeSound() {
+    return 'Meowww';
+  }
+}
+// exports = Cat; // It will not work
+module.exports = Cat;
+______________________________________________________
+
+Try the following example with exports and then with module.exports.
+
+main.js
+______________________________________________________
+const Cat = require('./cat');
+var cat = new Cat();
+console.log(cat.makeSound());
+______________________________________________________
+
+To sum up, when to use module.exports vs exports:
+
+Use exports to:
+
+1. Export named function. e.g. exports.area, exports.circunference.
+
+Use module.exports to:
+
+1. If you want to export an object, class, function at the root level (e.g. module.exports = Cat
+2. If you want to return a single object that exposes multiple assignments. e.g.module.exports = {area: area, circumference: circunference};
+
+
+___________________________________________________________________________________________
+5. Imports
+
+Imports are not available in Node as the version 6. However, it might come in future versions.
+
+future of modules in javascript
+
+______________________________________________________
+import circle from './circle';
+import {area, circumference} from './circle';
+You can use it today, using transpilers such as Traceur Compiler, Babel or Rollup. But, that will be for another post.
+______________________________________________________
+
+We learned about how to create Node.js modules and use it in our code. Modules allow us to reuse code easily.
+They provide functionality that is isolated from other modules. Required is used to load modules.
+Export and module exports allow defining what parts of our code we want to expose.
+We also explored the difference between module.exports and exports.
+Finally, we took a quick pick about what’s coming up for modules using imports.

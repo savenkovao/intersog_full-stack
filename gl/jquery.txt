@@ -1,0 +1,5 @@
+.toggleClass()
+.val()
+.trigger()
+.fadeOut()
+.blur()
